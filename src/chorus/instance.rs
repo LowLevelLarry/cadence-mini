@@ -67,6 +67,11 @@ pub struct ChorusInstance {
     pub equivocation_proofs: Vec<EquivocationProof>,
     round1_tick: Option<Tick>,
     round2_tick: Option<Tick>,
+    // wall-clock (sim tick) of the moment this validator actually reached each milestone —
+    // used by experiments/latency.rs (M6) to measure latency, distinct from round1_tick/
+    // round2_tick above which only record when *this validator cast its own* vote.
+    pub speculative_tick: Option<Tick>,
+    pub finalized_tick: Option<Tick>,
 }
 
 impl ChorusInstance {
@@ -107,6 +112,8 @@ impl ChorusInstance {
             equivocation_proofs: Vec::new(),
             round1_tick: None,
             round2_tick: None,
+            speculative_tick: None,
+            finalized_tick: None,
         }
     }
 
@@ -263,6 +270,7 @@ impl ChorusInstance {
                 via_fallback: false,
                 round: 1,
             });
+            self.speculative_tick = Some(ctx.tick);
             ctx.log(format!("slot {} speculatively finalized by validator {}", self.config.slot, self.id));
         }
 
@@ -305,6 +313,7 @@ impl ChorusInstance {
             self.config.slot, self.id
         ));
         self.finalized = Some(FinalizedSlot { meta_block, via_fallback, round });
+        self.finalized_tick = Some(ctx.tick);
     }
 
     fn maybe_enter_fallback(&mut self, ctx: &mut Ctx<ChorusMsg>) {
