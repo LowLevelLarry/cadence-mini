@@ -12,7 +12,7 @@
 use super::{ChorusConfig, ChorusMsg, EquivocationProof, ProposerBehavior, RoundVote};
 use crate::certifier::{Certifier, ThresholdCertifier};
 use crate::sim::{Ctx, Tick};
-use crate::types::{Entry, MetaBlock, ProposerId, Slot, ValidatorId};
+use crate::types::{merge_block, Block, Digest, Entry, MetaBlock, ProposerId, Slot, ValidatorId};
 use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -112,6 +112,48 @@ impl ChorusInstance {
 
     pub fn slot(&self) -> Slot {
         self.config.slot
+    }
+
+    // §4.4: from a finalized meta-block to the slot's block — recover each included
+    // proposer's payload from whatever this validator holds (direct dissemination, a round-1
+    // yes vote, or a fallback-yes vote all carry the payload), then apply the MCP merge rule.
+    // Returns None until this validator has actually finalized the slot.
+    pub fn recovered_block(&self) -> Option<Block> {
+        let f = self.finalized.as_ref()?;
+        let recovered: Vec<(ProposerId, Option<Vec<u64>>)> = f
+            .meta_block
+            .entries
+            .iter()
+            .map(|(proposer, entry)| {
+                let payload = match entry {
+                    Entry::Included(digest) => self.recover_payload(*proposer, *digest),
+                    Entry::Excluded => None,
+                };
+                (*proposer, payload)
+            })
+            .collect();
+        Some(merge_block(f.meta_block.slot, &recovered))
+    }
+
+    fn recover_payload(&self, proposer: ProposerId, digest: Digest) -> Option<Vec<u64>> {
+        if let Some((d, payload)) = self.received.get(&proposer)
+            && *d == digest
+        {
+            return Some(payload.clone());
+        }
+        for votes in [self.round1_votes.get(&proposer), self.fallback_votes.get(&proposer)]
+            .into_iter()
+            .flatten()
+        {
+            for vote in votes.values() {
+                if let RoundVote::Yes { digest: d, payload } = vote
+                    && *d == digest
+                {
+                    return Some(payload.clone());
+                }
+            }
+        }
+        None
     }
 
     fn is_proposer(&self) -> bool {

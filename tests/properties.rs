@@ -33,3 +33,12 @@ mod pipeline_decoupling;
 
 #[path = "properties/pipeline_throttling.rs"]
 mod pipeline_throttling;
+
+#[path = "properties/mcp_censorship_resistance.rs"]
+mod mcp_censorship_resistance;
+
+#[path = "properties/mcp_hiding.rs"]
+mod mcp_hiding;
+
+#[path = "properties/mcp_no_aggregation_tax.rs"]
+mod mcp_no_aggregation_tax;
