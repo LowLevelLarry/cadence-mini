@@ -187,7 +187,7 @@ impl<N: Node> Engine<N> {
             *e += 1;
             v
         };
-        let delay = self.delay_model.delay(self.run_seed, from, to, link_seq);
+        let delay = self.delay_model.delay(self.run_seed, from, to, link_seq, now);
         let deliver_tick = now + delay;
         let seq = self.next_seq();
         self.trace.record(
