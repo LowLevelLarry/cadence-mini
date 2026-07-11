@@ -42,3 +42,12 @@ mod mcp_hiding;
 
 #[path = "properties/mcp_no_aggregation_tax.rs"]
 mod mcp_no_aggregation_tax;
+
+#[path = "properties/speculative_soundness.rs"]
+mod speculative_soundness;
+
+#[path = "properties/speculative_revert.rs"]
+mod speculative_revert;
+
+#[path = "properties/adversary_suite.rs"]
+mod adversary_suite;
