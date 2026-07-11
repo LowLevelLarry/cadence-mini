@@ -344,22 +344,25 @@ impl ChorusInstance {
     fn compute_fallback_vote(&mut self, proposer: ProposerId) -> RoundVote {
         let empty = HashMap::new();
         let votes = self.round1_votes.get(&proposer).unwrap_or(&empty);
-        if let Some(cert) = self.certifier.certify(votes, self.certifier.quorum_f_plus_1())
-            && let RoundVote::Yes { digest, payload } = &cert.value
-        {
-            return RoundVote::Yes { digest: *digest, payload: payload.clone() };
-        }
-        // check for an equivocation: two distinct digests each with >= f+1 witnesses
+
+        // group round-1 yes votes by digest first, so a tie between two digests that both
+        // clear the f+1 threshold is caught as an equivocation rather than resolved by
+        // whichever HashMap<Digest, _> happens to iterate first — HashMap's default hasher is
+        // randomized per instance, so picking "the first one that clears threshold" would be
+        // nondeterministic across validators (and could itself violate Gate 2a's safety, since
+        // two validators could each accept a different one of the two conflicting digests).
         let mut by_digest: HashMap<u64, Vec<ValidatorId>> = HashMap::new();
         for (&voter, v) in votes.iter() {
             if let RoundVote::Yes { digest, .. } = v {
                 by_digest.entry(*digest).or_default().push(voter);
             }
         }
-        let strong: Vec<(u64, Vec<ValidatorId>)> = by_digest
+        let mut strong: Vec<(u64, Vec<ValidatorId>)> = by_digest
             .into_iter()
             .filter(|(_, w)| w.len() >= self.certifier.quorum_f_plus_1())
             .collect();
+        strong.sort_by_key(|(digest, _)| *digest); // canonical, not insertion/hash order
+
         if strong.len() >= 2 {
             let (da, wa) = strong[0].clone();
             let (db, wb) = strong[1].clone();
@@ -371,6 +374,17 @@ impl ChorusInstance {
                 digest_b: db,
                 witnesses_b: wb,
             });
+            return RoundVote::No;
+        }
+
+        if let Some((digest, witnesses)) = strong.into_iter().next() {
+            let payload = witnesses.iter().find_map(|w| match votes.get(w) {
+                Some(RoundVote::Yes { digest: d, payload }) if *d == digest => Some(payload.clone()),
+                _ => None,
+            });
+            if let Some(payload) = payload {
+                return RoundVote::Yes { digest, payload };
+            }
         }
         RoundVote::No
     }
