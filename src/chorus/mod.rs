@@ -1,3 +1,4 @@
+pub mod instance;
 pub mod validator;
 
 use crate::types::{Digest, MetaBlock, ProposerId, Slot, ValidatorId};
@@ -45,6 +46,20 @@ pub enum ChorusMsg {
     // leader's decision, and the echo round that certifies it.
     FallbackDecide { slot: Slot, meta_block: MetaBlock },
     FallbackEcho { slot: Slot, meta_block: MetaBlock },
+}
+
+impl ChorusMsg {
+    pub fn slot(&self) -> Slot {
+        match self {
+            ChorusMsg::Disseminate { slot, .. }
+            | ChorusMsg::Round1Vote { slot, .. }
+            | ChorusMsg::FastVote { slot, .. }
+            | ChorusMsg::FallbackBundle { slot, .. }
+            | ChorusMsg::FallbackPropose { slot, .. }
+            | ChorusMsg::FallbackDecide { slot, .. }
+            | ChorusMsg::FallbackEcho { slot, .. } => *slot,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
