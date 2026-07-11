@@ -24,3 +24,12 @@ mod chorus_resilience;
 
 #[path = "properties/chorus_liveness.rs"]
 mod chorus_liveness;
+
+#[path = "properties/pipeline_independence.rs"]
+mod pipeline_independence;
+
+#[path = "properties/pipeline_decoupling.rs"]
+mod pipeline_decoupling;
+
+#[path = "properties/pipeline_throttling.rs"]
+mod pipeline_throttling;
