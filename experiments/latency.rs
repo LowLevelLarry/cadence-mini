@@ -176,6 +176,10 @@ measurement bug, not a protocol bug: the round count itself was always correct (
 to speculative, two to full finality — verified directly against the round-1/round-2 gaps \
 above), only where the clock started was wrong. See NOTES.md's 2026-07-12 entry for the full \
 writeup.\n\n\
+As a cross-check: the old deadline-anchored speculative average plus DELTA ({deadline_to_spec_avg:.1}ms \
++ {DELTA}ms) equals the new slot-start-anchored speculative average ({spec_avg:.1}ms) exactly, \
+which is what you'd expect algebraically (start = deadline - delta), and confirms this was \
+purely an anchor difference rather than a coincidental numeric shift.\n\n\
 ## Honest caveats\n\n\
 - The 5-region delay matrix here is invented to be geo-plausible, not Monad's actual measured \
 inter-validator latencies (which aren't published in a reproducible form). Absolute numbers \
