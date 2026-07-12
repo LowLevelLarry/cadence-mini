@@ -1,5 +1,5 @@
-// GATE 3a — independence: with 100-tick link delays and a 10-tick block interval, the trace
-// shows >= 5 instances simultaneously in flight (pipelining is real, not sequential).
+// independence: with 100-tick link delays and a 10-tick block interval, we should see
+// several instances simultaneously in flight — pipelining should be real, not sequential.
 
 use cadence_mini::pipeline::{ConductorConfig, PipelineValidator};
 use cadence_mini::sim::{Engine, FixedDelay};

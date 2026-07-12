@@ -1,4 +1,4 @@
-// GATE 4b — hiding: no proposer's proposal-construction event causally follows another
+// hiding: no proposer's proposal-construction event should causally follow another
 // proposer's proposal-broadcast for the same slot. Checked structurally against the trace:
 // for every ordered pair of proposers (i, j), the tick at which i *sends* its own
 // Disseminate must not be later than the tick at which i *receives* (delivers) j's

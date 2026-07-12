@@ -42,8 +42,8 @@ pub enum ChorusMsg {
     },
     // §4.3: the meta-block (fast or fallback) a validator proposes to the fallback agreement.
     FallbackPropose { slot: Slot, meta_block: MetaBlock },
-    // simplified leader-based fallback agreement (see NOTES.md ambiguity #2): the designated
-    // leader's decision, and the echo round that certifies it.
+    // simplified leader-based fallback agreement: the designated leader's decision, and the
+    // echo round that certifies it.
     FallbackDecide { slot: Slot, meta_block: MetaBlock },
     FallbackEcho { slot: Slot, meta_block: MetaBlock },
 }
@@ -66,14 +66,14 @@ impl ChorusMsg {
 pub enum ProposerBehavior {
     Honest,
     Silent,
-    // adversary/equivocator.rs (M5) builds on this: send `payload_a` to `split_a` and
-    // `payload_b` to everyone else — a real proposer-level equivocation.
+    // send `payload_a` to `split_a` and `payload_b` to everyone else — a real
+    // proposer-level equivocation, used by adversary/equivocator.rs.
     Equivocate {
         payload_a: Vec<u64>,
         payload_b: Vec<u64>,
         split_a: Vec<ValidatorId>,
     },
-    // adversary/censor.rs (M5): disseminate, but never a specific transaction id.
+    // disseminate, but never a specific transaction id — used by adversary/censor.rs.
     Censor { payload: Vec<u64> },
 }
 
@@ -91,8 +91,7 @@ pub struct ChorusConfig {
 
 // §4.3 / §4.5: proof that a proposer equivocated — two groups of >= f+1 validators each
 // attesting (via round-1 yes votes) to a different digest for the same (slot, proposer).
-// This is what licenses reverting a speculative finalization (NOTES.md §4, "equivocation
-// proof").
+// This is what licenses reverting a speculative finalization.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EquivocationProof {
     pub slot: Slot,
@@ -108,9 +107,9 @@ impl ChorusConfig {
         self.deadline.saturating_sub(self.delta)
     }
 
-    // deterministic per-slot fallback-agreement leader (NOTES.md ambiguity #2): rotates by
-    // slot number over the full validator set so a single Byzantine validator can't
-    // permanently wedge the fallback path across every slot.
+    // deterministic per-slot fallback-agreement leader: rotates by slot number over the
+    // full validator set so a single Byzantine validator can't permanently wedge the
+    // fallback path across every slot.
     pub fn fallback_leader(&self) -> ValidatorId {
         let mut sorted = self.validators.clone();
         sorted.sort_unstable();

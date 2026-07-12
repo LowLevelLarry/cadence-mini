@@ -1,4 +1,4 @@
-// GATE 1a — determinism: same seed run twice produces byte-identical traces, 20 seeds.
+// determinism: same seed run twice should produce byte-identical traces.
 
 use cadence_mini::sim::{Ctx, Engine, FixedDelay, Node, NodeId, UniformDelay};
 use rand::Rng;

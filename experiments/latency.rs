@@ -1,8 +1,9 @@
-// GATE 6: reproduces the *shape* of the paper's §8 latency evaluation — 200 validators, 5
-// concurrent proposers per slot, geo-plausible network delay — not its published numbers
-// (NOTES.md ambiguity #7). Runs many independent trials, collects per-validator finalization
-// and speculative-finalization latency (ticks past the slot deadline, treated as ms), and
-// writes REPORT.md with p50/p90/p99 plus a written comparison to the paper's claims.
+// tries to reproduce the *shape* of the paper's section-8 latency evaluation — 200
+// validators, 5 concurrent proposers per slot, geo-plausible network delay — not its
+// published numbers, which aren't available to reproduce from directly. runs many
+// independent trials, collects per-validator finalization and speculative-finalization
+// latency (ticks past the slot deadline, treated as ms), and writes REPORT.md with
+// p50/p90/p99 plus a written comparison to the paper's claims.
 
 use cadence_mini::adversary::geo::{assign_regions, GeoDelay};
 use cadence_mini::chorus::validator::ChorusValidator;
@@ -96,7 +97,7 @@ fn main() {
     );
 
     let report = format!(
-        "# REPORT — M6 latency shape check\n\n\
+        "# Latency shape check\n\n\
 Ran {TRIALS} trials, {N} validators (f={F}), {PROPOSERS} concurrent proposers per slot, over a \
 geo-plausible 5-region delay matrix (same-region ~8ms, cross-region 60-220ms, +/-15ms jitter). \
 Samples pool every validator's own observed latency across all trials, in ticks (treated as ms).\n\n\
@@ -117,10 +118,10 @@ The 2x-median-one-way-delay shape check (finalization ~= 2 * median one-way dela
 fast path is D + 2*delta): this run's median finalization latency is {fin_p50}ms.\n\n\
 ## Honest caveats\n\n\
 - The 5-region delay matrix here is invented to be geo-plausible, not Monad's actual measured \
-inter-validator latencies (which aren't published in a reproducible form) — see NOTES.md \
-ambiguity #7. Absolute numbers are not expected to match the paper's; only the *shape* \
-(speculative substantially faster than final, finalization on the order of a couple hundred \
-ms at these delay magnitudes) is being compared.\n\
+inter-validator latencies (which aren't published in a reproducible form). Absolute numbers \
+are not expected to match the paper's; only the *shape* (speculative substantially faster \
+than final, finalization on the order of a couple hundred ms at these delay magnitudes) is \
+being compared.\n\
 - This experiment measures only Chorus's own fast-path latency for a single slot; it does not \
 run the full Conductor/pipeline scheduling loop, so it says nothing about steady-state \
 throughput or the block-interval-driven inclusion wait (which is reported analytically above, \

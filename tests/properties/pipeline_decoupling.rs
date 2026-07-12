@@ -1,4 +1,4 @@
-// GATE 3b — decoupling: halving the block interval roughly doubles finalized-blocks-per-
+// decoupling: halving the block interval should roughly double finalized-blocks-per-
 // 1000-ticks, while per-block finalization latency (finalize tick minus deadline) stays flat.
 
 use cadence_mini::chorus::ProposerBehavior;

@@ -1,5 +1,5 @@
-// GATE 2c — resilience: finalization completes with f byzantine-silent validators at the
-// paper's optimal bound (n = 3f+1); one over the bound (f+1 silent) may stall, but must
+// resilience: finalization should complete with f byzantine-silent validators at the
+// optimal bound (n = 3f+1); one over the bound (f+1 silent) may stall, but must
 // never produce conflicting finalizations (safety still holds).
 
 use crate::chorus_common::*;

@@ -1,4 +1,4 @@
-// GATE 1b — delay injection: a configured 50-tick link delay is observable in the trace.
+// a configured link delay should show up exactly in the trace.
 
 use cadence_mini::sim::{Ctx, Engine, FixedDelay, Node, NodeId, TraceKind};
 

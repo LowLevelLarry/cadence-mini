@@ -1,5 +1,5 @@
-// GATE 3c — throttling (boundedness): under injected instability (delays spiking 10x),
-// outstanding instances never exceed the configured bound (paper: at most 2W - p).
+// throttling (boundedness): under injected instability (delays spiking 10x), outstanding
+// instances should never exceed the configured bound (at most 2W - p).
 
 use cadence_mini::chorus::ProposerBehavior;
 use cadence_mini::pipeline::{ConductorConfig, PipelineValidator};

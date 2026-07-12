@@ -1,5 +1,5 @@
-// GATE 2a — agreement/safety: no two honest validators ever finalize conflicting blocks for
-// a slot, including under adversarial (widely varying) delays. 20 seeds.
+// safety: no two honest validators should ever finalize conflicting blocks for a slot,
+// even under adversarial (widely varying) delays.
 
 use crate::chorus_common::*;
 use cadence_mini::chorus::ProposerBehavior;

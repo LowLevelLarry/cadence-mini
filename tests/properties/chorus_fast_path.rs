@@ -1,4 +1,4 @@
-// GATE 2b — fast path: all-honest validators under synchrony finalize in exactly 3
+// fast path: all-honest validators under synchrony should finalize in exactly 3
 // communication rounds (dissemination, round-1 vote, fast vote).
 
 use crate::chorus_common::*;

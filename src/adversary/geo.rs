@@ -1,8 +1,7 @@
-// a geo-plausible delay matrix (M6): validators are spread across a handful of regions with
+// a geo-plausible delay matrix: validators are spread across a handful of regions with
 // realistic-shaped one-way latencies (same-region: single-digit ms; cross-region: tens to
 // ~250ms), used to approximate the "shape" of the paper's 200-validator experiment (§8) —
-// not its actual published numbers, which aren't available to reproduce from (NOTES.md
-// ambiguity #7).
+// not its actual published numbers, which aren't available to reproduce from directly.
 
 use crate::sim::rng::link_rng;
 use crate::sim::{DelayModel, NodeId, Tick};

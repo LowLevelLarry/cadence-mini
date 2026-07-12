@@ -1,5 +1,5 @@
-// GATE 4c — no aggregation tax: fast-path round count with k proposers equals the
-// single-proposer (M2) round count (2: round-1 vote, fast vote). MCP is folded into the
+// no aggregation tax: fast-path round count with k proposers should equal the
+// single-proposer round count (2: round-1 vote, fast vote). MCP is folded into the
 // same two rounds, not bolted on as an extra aggregation phase.
 
 use crate::chorus_common::*;

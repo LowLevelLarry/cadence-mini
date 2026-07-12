@@ -1,9 +1,8 @@
 // the actual Chorus slot-consensus logic (§4), extracted from any particular Node/engine
-// wiring so it can run either as its own single-slot Node (chorus/validator.rs, used by the
-// M2 gate) or as one of many concurrently-running instances inside a single pipelined
-// validator (pipeline.rs, M3+). An instance never talks to another instance directly and
-// carries no reference to any other slot — that separation is what extreme pipelining rests
-// on (NOTES.md §3).
+// wiring so it can run either as its own single-slot Node (chorus/validator.rs) or as one of
+// many concurrently-running instances inside a single pipelined validator (pipeline.rs). An
+// instance never talks to another instance directly and carries no reference to any other
+// slot — that separation is what extreme pipelining rests on.
 //
 // timers this instance schedules are always named "{slot}#name" so a caller juggling many
 // instances for one validator can route a fired timer to the right one without this code
@@ -19,7 +18,7 @@ use std::collections::{HashMap, HashSet};
 pub struct FinalizedSlot {
     pub meta_block: MetaBlock,
     pub via_fallback: bool,
-    // round (from slot open) at which this validator observed finality — used by Gate 2b
+    // round (from slot open) at which this validator observed finality
     pub round: u32,
 }
 
@@ -358,8 +357,8 @@ impl ChorusInstance {
         // clear the f+1 threshold is caught as an equivocation rather than resolved by
         // whichever HashMap<Digest, _> happens to iterate first — HashMap's default hasher is
         // randomized per instance, so picking "the first one that clears threshold" would be
-        // nondeterministic across validators (and could itself violate Gate 2a's safety, since
-        // two validators could each accept a different one of the two conflicting digests).
+        // nondeterministic across validators (and could itself break safety, since two
+        // validators could each accept a different one of the two conflicting digests).
         let mut by_digest: HashMap<u64, Vec<ValidatorId>> = HashMap::new();
         for (&voter, v) in votes.iter() {
             if let RoundVote::Yes { digest, .. } = v {
@@ -440,8 +439,9 @@ impl ChorusInstance {
             return;
         }
         self.sent_fallback_decide = true;
-        // deterministic pick: highest-multiplicity value, canonical tie-break (NOTES.md
-        // ambiguity #8: this leader-echo agreement is a simulation-only stand-in, see §4.3)
+        // deterministic pick: highest-multiplicity value, canonical tie-break. this
+        // leader-echo agreement is a simulation-only stand-in for the paper's black-box
+        // fallback agreement (§4.3), not a general async BFT/ACS protocol.
         let mut counts: HashMap<MetaBlock, usize> = HashMap::new();
         for mb in self.fallback_proposals.values() {
             *counts.entry(mb.clone()).or_default() += 1;

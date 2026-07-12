@@ -1,4 +1,4 @@
-// GATE 1c — no wall-clock or thread APIs anywhere in src/.
+// keep wall-clock/thread APIs out of src/ entirely — the sim has to stay deterministic.
 
 use std::fs;
 use std::path::{Path, PathBuf};

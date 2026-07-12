@@ -1,5 +1,5 @@
-// GATE 5c — the full adversary suite (equivocator, censor, offline, partition-and-heal)
-// preserves Gate 2a safety in every scenario: no two honest validators ever finalize
+// the full adversary suite (equivocator, censor, offline, partition-and-heal) should
+// preserve safety in every scenario: no two honest validators ever finalize
 // conflicting blocks for a slot.
 
 use cadence_mini::adversary::{censor, delayer, equivocator, offline};

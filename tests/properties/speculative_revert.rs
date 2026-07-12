@@ -1,23 +1,21 @@
-// GATE 5b — revert correctness: an equivocating proposer never causes an unsound revert.
+// revert correctness: an equivocating proposer should never cause an unsound revert.
 // Concretely: (1) whenever a validator's speculative view does diverge from what eventually
-// finalizes, there is always a justifying equivocation proof for the proposer whose entry
-// changed; (2) full finality (Gate 2a) is never violated by the presence of an equivocator;
-// (3) the equivocation-detection machinery itself is exercised (proofs actually get recorded
-// somewhere in the run) so this isn't a vacuous pass.
+// finalizes, there should always be a justifying equivocation proof for the proposer whose
+// entry changed; (2) full finality is never violated by the presence of an equivocator;
+// (3) the equivocation-detection machinery itself gets exercised (proofs actually get
+// recorded somewhere in the run) so this isn't a vacuous pass.
 //
-// NOTES.md ambiguity #9: a live revert (a validator's own speculative view actually
-// overturned by full finalization) turns out to be unreachable with cadence-mini's simplified
-// fallback-agreement leader rule (NOTES.md ambiguity #2/#8), which decides by max-multiplicity
-// among received proposals. Because a fast-quorum-backed meta-block is always held by >= 2f+1
-// of the n=3f+1 validators, it is provably always a plurality among any 2f+1-sized batch the
-// leader collects — a minority (excluded/other-digest) proposal can mathematically never
-// outvote it. So this test exercises a genuine 2f-vs-2f split (n=4,f=1: 2 vs 2) that reliably
-// triggers equivocation *detection* (both digests clear the f+1 threshold, so no validator
-// ever reaches fast-path quorum and everyone provably goes to fallback), and checks the
-// *conditional* soundness property — if a revert is ever observed, it is always justified —
-// which holds regardless of whether this particular mock can produce a live one. The
-// proof-matching logic itself is verified directly and unconditionally in the second test
-// below, independent of any live simulation run.
+// side note on why this doesn't try to force a *live* revert: with the simplified
+// fallback-agreement leader rule here (max-multiplicity vote among received proposals), a
+// fast-quorum-backed meta-block is always held by >= 2f+1 of the n=3f+1 validators, which is
+// provably always a plurality of any 2f+1-sized batch the leader collects — a minority
+// (excluded/other-digest) proposal can mathematically never outvote it. So instead this test
+// uses a genuine 2-vs-2 split (n=4,f=1) that reliably triggers equivocation *detection* (both
+// digests clear the f+1 threshold, so no validator ever reaches fast-path quorum and everyone
+// provably goes to fallback), and checks the *conditional* soundness property — if a revert
+// is ever observed, it's always justified — which holds regardless of whether this particular
+// setup can produce a live one. The proof-matching logic itself is verified directly and
+// unconditionally in the second test below, independent of any live simulation run.
 
 use crate::chorus_common::*;
 use cadence_mini::chorus::ProposerBehavior;
@@ -36,7 +34,7 @@ fn equivocation_triggers_correct_revert() {
         // proposer 0 equivocates with an even 2-vs-2 split (n=4,f=1): neither digest can
         // reach the 2f+1=3 fast quorum, but both clear the f+1=2 fallback-strength
         // threshold, so every validator is forced to fallback and independently detects
-        // the equivocation (see module doc comment above for why this split, not 3-vs-1)
+        // the equivocation (see the file-level comment for why this split, not 3-vs-1)
         behavior.insert(
             0,
             ProposerBehavior::Equivocate {
@@ -72,7 +70,7 @@ fn equivocation_triggers_correct_revert() {
                 );
             }
         }
-        // Gate 2a still holds: no two honest validators finalize conflicting blocks, even
+        // safety still holds: no two honest validators finalize conflicting blocks, even
         // with an equivocator present in the slot
         if let Some(first) = finals.first() {
             assert!(

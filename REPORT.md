@@ -1,4 +1,4 @@
-# REPORT — M6 latency shape check
+# Latency shape check
 
 Ran 30 trials, 200 validators (f=66), 5 concurrent proposers per slot, over a geo-plausible 5-region delay matrix (same-region ~8ms, cross-region 60-220ms, +/-15ms jitter). Samples pool every validator's own observed latency across all trials, in ticks (treated as ms).
 
@@ -21,6 +21,6 @@ The 2x-median-one-way-delay shape check (finalization ~= 2 * median one-way dela
 
 ## Honest caveats
 
-- The 5-region delay matrix here is invented to be geo-plausible, not Monad's actual measured inter-validator latencies (which aren't published in a reproducible form) — see NOTES.md ambiguity #7. Absolute numbers are not expected to match the paper's; only the *shape* (speculative substantially faster than final, finalization on the order of a couple hundred ms at these delay magnitudes) is being compared.
+- The 5-region delay matrix here is invented to be geo-plausible, not Monad's actual measured inter-validator latencies (which aren't published in a reproducible form). Absolute numbers are not expected to match the paper's; only the *shape* (speculative substantially faster than final, finalization on the order of a couple hundred ms at these delay magnitudes) is being compared.
 - This experiment measures only Chorus's own fast-path latency for a single slot; it does not run the full Conductor/pipeline scheduling loop, so it says nothing about steady-state throughput or the block-interval-driven inclusion wait (which is reported analytically above, not simulated).
 - No fallback-path latency is included: FALLBACK_TIMEOUT is set high enough that, at these delay magnitudes, every trial's proposers reach fast-path quorum before it ever fires.

@@ -1,6 +1,6 @@
-// GATE 4a — censorship resistance: a transaction submitted to exactly one correct proposer
-// appears in the finalized slot's block under synchrony, even when every other proposer
-// actively "censors" it (deliberately builds a proposal without it), 20 seeds.
+// censorship resistance: a transaction submitted to exactly one correct proposer should
+// appear in the finalized slot's block under synchrony, even when every other proposer
+// actively "censors" it (deliberately builds a proposal without it).
 
 use crate::chorus_common::*;
 use cadence_mini::chorus::ProposerBehavior;

@@ -1,5 +1,5 @@
-// GATE 5a — speculative soundness: speculative finality is never reverted in any run
-// lacking an equivocation, 20 seeds.
+// speculative soundness: speculative finality should never be reverted in a run
+// lacking an equivocation.
 
 use crate::chorus_common::*;
 use cadence_mini::chorus::ProposerBehavior;

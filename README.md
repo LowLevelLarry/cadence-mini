@@ -2,7 +2,7 @@
 
 A small, simulation-first implementation of Cadence, the multiple-concurrent-proposer (MCP)
 BFT consensus protocol from Category Labs' paper "Cadence: Extreme Pipelining with Multiple
-Concurrent Proposers" (arXiv 2607.02275). I built this as a learning/reference artifact — a
+Concurrent Proposers" (arXiv 2607.02275). I built this as a learning/reference project — a
 way to hold the paper in one hand and working code in the other, not a production node.
 
 ## What's actually in here
@@ -31,10 +31,7 @@ On top of that:
 - **`adversary/`** — an equivocator, a censor, an offline/muted validator, a partition-and-heal
   delay model, and a geo-plausible delay matrix for the latency experiment.
 
-Every milestone's gate is a property test under `tests/properties/`, run across >= 20 seeds
-where the gate calls for it. `SPEC.md` maps every property the paper claims to the test that
-checks it; `NOTES.md` is my own restatement of the protocol plus every place I had to make a
-judgment call where the paper was silent or where I deliberately simplified something.
+Property tests live under `tests/properties/`, most run across a spread of seeds.
 
 ## What's simplified (the honest list)
 
@@ -47,17 +44,16 @@ judgment call where the paper was silent or where I deliberately simplified some
 - **The fallback agreement is a simulation-only stand-in**, not a general asynchronous
   BFT/ACS protocol: a deterministic per-slot leader collects proposals and decides by
   max-multiplicity, backed by an echo round for a real certificate. This turns out to make one
-  specific thing structurally unreachable in cadence-mini that the real protocol only makes
-  *rare*: a live "speculative view actually overturned by full finalization" event, because a
+  specific thing structurally unreachable here that the real protocol only makes *rare*: a
+  live "speculative view actually overturned by full finalization" event, because a
   fast-quorum-backed meta-block is provably always a plurality of anything this leader rule
-  collects. Gate 5b tests the *soundness* of reverts (if one happens, it's justified) rather
-  than forcing a live one — see NOTES.md ambiguity #9 for the full reasoning.
+  collects. The revert test checks *soundness* instead (if a revert happens, it's justified by
+  a real equivocation proof) rather than forcing a live one.
 - **Conductor's deadline agreement is local, not a real ACS+median sub-protocol.** The
   simulator gives every honest validator the same deterministic view of completions, so each
   validator computes its own next-window deadline directly rather than running a separate
-  agreement instance to converge on one. NOTES.md ambiguity #5 has the details on why this
-  doesn't undermine the specific properties the gates check.
-- **M6's latency experiment compares shape, not numbers.** The 200-validator, 5-region delay
+  agreement instance to converge on one.
+- **The latency experiment compares shape, not numbers.** The 200-validator, 5-region delay
   matrix is invented to be geo-plausible; it isn't Monad's actual measured inter-validator
   latency. `REPORT.md` is explicit about where the run's numbers diverge from the paper's
   (notably the speculative/final ratio, which came out closer to 0.5 than the paper's ~0.76 —
@@ -67,7 +63,7 @@ judgment call where the paper was silent or where I deliberately simplified some
 ## Running it
 
 ```
-cargo test --test properties      # every milestone's gate, in one binary
+cargo test --test properties      # the full property-test suite, one binary
 cargo clippy --all-targets        # no lint warnings anywhere
 cargo run --release --bin latency # regenerates REPORT.md
 ```

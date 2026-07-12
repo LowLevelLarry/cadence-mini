@@ -1,9 +1,11 @@
 // §3 / §5: the extreme-pipelining framework, instantiated with Chorus as slot consensus and
-// a simplified Conductor as orchestrator (NOTES.md §4, ambiguity #5). One PipelineValidator
-// Node runs many ChorusInstances concurrently, one per open slot; nothing about slot s is
-// required for slot s+1 to open — the only cross-slot coupling is the orchestrator's window
-// throttle, which is a purely local (per-validator) bound, matching the paper's boundedness
-// guarantee ("each honest validator has only a bounded number of slots underway").
+// a simplified Conductor as orchestrator. One PipelineValidator Node runs many ChorusInstances
+// concurrently, one per open slot; nothing about slot s is required for slot s+1 to open — the
+// only cross-slot coupling is the orchestrator's window throttle, which is a purely local
+// (per-validator) bound, matching the paper's boundedness guarantee ("each honest validator
+// has only a bounded number of slots underway"). Conductor's real deadline agreement (ACS +
+// median across validators) is simplified here to a local deterministic computation, since the
+// simulator already gives every honest validator the same view of completions.
 
 use crate::chorus::instance::{timer_slot, ChorusInstance};
 use crate::chorus::{ChorusConfig, ChorusMsg, ProposerBehavior};
