@@ -33,7 +33,9 @@ On top of that:
 - **`adversary/`** — an equivocator, a censor, an offline/muted validator, a partition-and-heal
   delay model, and a geo-plausible delay matrix for the latency experiment.
 
-Property tests live under `tests/properties/`, most run across a spread of seeds.
+Property tests live under `tests/properties/`, most run across a spread of seeds. `NOTES.md`
+has the paper digest and a running log of design decisions; `SPEC.md` has the full property ->
+test ledger.
 
 ## What's simplified (the honest list)
 

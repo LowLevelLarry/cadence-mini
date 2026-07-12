@@ -155,10 +155,10 @@ d - c is the cleanest available estimate of a single voting round (delta) in thi
 implementation, because both endpoints are network-driven events rather than the fixed \
 deadline. delta approx {round2_avg:.0}ms here, versus the paper's delta approx 52ms — expected, \
 given this run's invented delay matrix goes up to 220ms cross-region against the paper's real \
-Monad backbone. round-1 gap (c - b) is *not* a clean delta: round-1 votes fire on a fixed \
-deadline timer (delta-parameter above the slot start), not on receipt of dissemination, so c - b \
-also absorbs whatever slack is left in that fixed window after dissemination actually \
-completed.\n\n\
+Monad backbone (see NOTES.md entry 6). round-1 gap (c - b) is *not* a clean delta: round-1 \
+votes fire on a fixed deadline timer (delta-parameter above the slot start), not on receipt of \
+dissemination, so c - b also absorbs whatever slack is left in that fixed window after \
+dissemination actually completed.\n\n\
 ## Comparison to the paper (Section 8)\n\n\
 The paper reports, over Monad mainnet's real 200-validator geography with 5 proposers: 219ms \
 average finalization, 167ms average speculative finality (speculative/final ratio ~0.76), and \
@@ -174,7 +174,8 @@ toward something further from the paper's D-dominated ~0.76. Anchoring to slot s
 restores D to both numbers and the ratio moves back into the paper's band. This was a \
 measurement bug, not a protocol bug: the round count itself was always correct (one voting round \
 to speculative, two to full finality — verified directly against the round-1/round-2 gaps \
-above), only where the clock started was wrong.\n\n\
+above), only where the clock started was wrong. See NOTES.md's 2026-07-12 entry for the full \
+writeup.\n\n\
 ## Honest caveats\n\n\
 - The 5-region delay matrix here is invented to be geo-plausible, not Monad's actual measured \
 inter-validator latencies (which aren't published in a reproducible form). Absolute numbers \
