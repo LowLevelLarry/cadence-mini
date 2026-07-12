@@ -2,6 +2,7 @@
 name = "cadence-mini"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.88"
 
 [dependencies]
 rand = { version = "0.10.2", features = ["std_rng"] }

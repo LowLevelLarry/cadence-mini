@@ -5,6 +5,8 @@ BFT consensus protocol from Category Labs' paper "Cadence: Extreme Pipelining wi
 Concurrent Proposers" (arXiv 2607.02275). I built this as a learning/reference project — a
 way to hold the paper in one hand and working code in the other, not a production node.
 
+Requires Rust 1.88+ (edition 2024 with let-chains, which stabilized in 1.88).
+
 ## What's actually in here
 
 Everything runs inside a single-threaded, seeded, discrete-event simulator (`src/sim/`): a
