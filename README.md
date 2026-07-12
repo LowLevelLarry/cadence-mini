@@ -57,10 +57,9 @@ Property tests live under `tests/properties/`, most run across a spread of seeds
   agreement instance to converge on one.
 - **The latency experiment compares shape, not numbers.** The 200-validator, 5-region delay
   matrix is invented to be geo-plausible; it isn't Monad's actual measured inter-validator
-  latency. `REPORT.md` is explicit about where the run's numbers diverge from the paper's
-  (notably the speculative/final ratio, which came out closer to 0.5 than the paper's ~0.76 —
-  a sensible result for two roughly-equal-cost rounds, but not what was measured on real
-  infrastructure).
+  latency, so absolute numbers aren't expected to match. `REPORT.md` includes a round-by-round
+  decomposition (dissemination delay, then each voting round, measured from slot start) — the
+  speculative/final ratio it produces lands close to the paper's ~0.76.
 
 ## Running it
 

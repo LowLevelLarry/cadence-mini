@@ -71,6 +71,10 @@ pub struct ChorusInstance {
     // round2_tick above which only record when *this validator cast its own* vote.
     pub speculative_tick: Option<Tick>,
     pub finalized_tick: Option<Tick>,
+    // tick of the last Disseminate this validator actually accepted before the deadline —
+    // used by experiments/latency.rs to decompose measured latency into a dissemination
+    // component and a voting component instead of lumping both into "past the deadline".
+    pub last_dissemination_tick: Option<Tick>,
 }
 
 impl ChorusInstance {
@@ -113,6 +117,7 @@ impl ChorusInstance {
             round2_tick: None,
             speculative_tick: None,
             finalized_tick: None,
+            last_dissemination_tick: None,
         }
     }
 
@@ -516,6 +521,7 @@ impl ChorusInstance {
                 if ctx.tick > self.config.deadline {
                     return; // §4.2: dissemination after the deadline never counts
                 }
+                self.last_dissemination_tick = Some(self.last_dissemination_tick.map_or(ctx.tick, |t| t.max(ctx.tick)));
                 self.received.entry(proposer).or_insert_with(|| (crate::types::digest_of(&payload), payload));
             }
             ChorusMsg::Round1Vote { slot, proposer, vote } => {
