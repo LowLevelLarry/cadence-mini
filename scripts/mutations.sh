@@ -41,12 +41,16 @@ run_mutation() {
     git checkout -- "$file"
 
     NAMES+=("$name")
-    if [ "$status" -ne 0 ] && grep -q "FAILED" /tmp/mutation_out.txt; then
-        echo "KILLED (test '$expect_test' failed, as expected)"
+    # a nonzero exit counts as killed either way: a literal test FAILED, or (under
+    # RUSTFLAGS=-D warnings, as CI runs) the mutation introduced a now-unused binding and
+    # the build itself was denied — both mean the mutation didn't slip through unnoticed.
+    if [ "$status" -ne 0 ]; then
+        echo "KILLED (cargo test exited nonzero touching '$expect_test')"
         RESULTS+=("KILLED")
     else
         echo "SURVIVED (test '$expect_test' did not fail — mutation went undetected)"
         RESULTS+=("SURVIVED")
+        cat /tmp/mutation_out.txt
     fi
     rm -f /tmp/mutation_out.txt
     echo
