@@ -2,7 +2,7 @@
 
 A small, simulation-first implementation of Cadence, the multiple-concurrent-proposer (MCP)
 BFT consensus protocol from Category Labs' paper "Cadence: Extreme Pipelining with Multiple
-Concurrent Proposers" (arXiv 2607.02275). I built this as a learning/reference project — a
+Concurrent Proposers" ([arXiv 2607.02275](https://arxiv.org/abs/2607.02275)). I built this as a learning/reference project — a
 way to hold the paper in one hand and working code in the other, not a production node.
 
 Requires Rust 1.88+ (edition 2024 with let-chains, which stabilized in 1.88).
