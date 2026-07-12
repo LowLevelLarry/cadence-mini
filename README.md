@@ -67,7 +67,23 @@ Property tests live under `tests/properties/`, most run across a spread of seeds
 cargo test --test properties      # the full property-test suite, one binary
 cargo clippy --all-targets        # no lint warnings anywhere
 cargo run --release --bin latency # regenerates REPORT.md
+./scripts/mutations.sh            # proves the tests above actually catch broken code
 ```
+
+## Testing the tests
+
+Green tests can mean the code is right, or that the tests aren't checking much. Mutation
+testing tells the two apart: deliberately break something specific, then confirm the test
+suite actually notices. `scripts/mutations.sh` applies each mutation below, runs the named
+test, checks it fails, and restores the file — repeated for every mutation, exiting nonzero if
+any of them survives.
+
+| mutation | killed by |
+|---|---|
+| quorum weakened from 2f+1 to f+1 in the certifier | `chorus_safety::no_conflicting_finalization` |
+| `justifying_proof` returns any proof instead of the one for the changed proposer | `speculative_revert::justifying_proof_matches_the_changed_proposer` |
+| a proposer waits to see another's proposal before sending its own | `mcp_hiding::no_causal_dependency_between_proposals` |
+| the window-throttle bound is disabled | `pipeline_throttling::outstanding_never_exceeds_bound` |
 
 ## What I'd do next
 
